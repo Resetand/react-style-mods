@@ -5,17 +5,26 @@ import { isFunction } from './utils';
 
 type ModsMap<TStyles> = Record<string, TStyles | ((propValue: any) => TStyles)>;
 
-type InferModsProps<M extends ModsMap<any>> = {
-    [P in keyof M]+?: M[P] extends (...args: any[]) => any ? Parameters<M[P]>[0] : boolean;
+type AnyFunction = (...args: any[]) => any;
+
+type InferParam<Fn extends AnyFunction> = {
+    [P in keyof Parameters<Fn>]: {} extends Pick<Parameters<Fn>, P>
+        ? Parameters<Fn>[0] | true
+        : Parameters<Fn>[0];
+}[0];
+
+export type InferModsProps<M extends ModsMap<any>> = {
+    [P in keyof M]+?: M[P] extends AnyFunction ? InferParam<M[P]> : true;
 };
 
 type WrapperProps<TC extends FC, M extends ModsMap<any>> = ComponentProps<TC> & InferModsProps<M>;
 
-export const createStyleMods = <TMap extends ModsMap<TStyles>, TStyles = CSSProperties>(
+export const createStyleMods = <
+    TStyles extends any = CSSProperties,
+    TMap extends ModsMap<TStyles> = ModsMap<TStyles>
+>(
     map: TMap
-) => {
-    return map;
-};
+) => map;
 
 export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
     return <TComponent extends FC>(Component: TComponent) => {
@@ -42,7 +51,13 @@ const selectStyles = <TStyles, TProps extends object, TMap extends ModsMap<TStyl
             const handler = mods[prop];
             styles = Object.assign(
                 styles,
-                isFunction(handler) ? handler(props[prop]) : props[prop] ? handler : {}
+                isFunction(handler)
+                    ? (props as any)[prop] === true
+                        ? handler()
+                        : handler(props[prop])
+                    : props[prop]
+                    ? handler
+                    : {}
             );
         } else if (prop === 'style') {
             styles = Object.assign(styles, props[prop]);
