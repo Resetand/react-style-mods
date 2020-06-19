@@ -37,10 +37,7 @@ export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
     };
 };
 
-const selectStyles = <TStyles, TProps extends object, TMap extends ModsMap<TStyles>>(
-    props: TProps,
-    mods: TMap
-) => {
+const selectStyles = (props: any, mods: ModsMap<any>) => {
     let styles: Record<string, any> = {};
     let restProps: any = {};
     for (const prop in props) {
