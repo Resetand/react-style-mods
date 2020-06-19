@@ -4,11 +4,20 @@
     "description": "React library for creating style modificators props",
     "homepage": "https://github.com/Resetand/react-style-mods",
     "main": "dist/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "dist/**/*"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "types": "index.d.ts",
+    "keywords": [
+        "react",
+        "styles",
+        "bem",
+        "mods",
+        "modificators"
+    ],
     "prepublish": "tsc",
     "author": "",
     "license": "ISC",
@@ -16,6 +25,7 @@
         "react": "16.13.1"
     },
     "devDependencies": {
-        "@types/react": "16.9.38"
+        "@types/react": "16.9.38",
+        "typescript": "3.9.5"
     }
 }

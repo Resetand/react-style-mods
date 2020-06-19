@@ -49,7 +49,7 @@ const selectStyles = (props: any, mods: ModsMap<any>) => {
             styles = Object.assign(
                 styles,
                 isFunction(handler)
-                    ? (props as any)[prop] === true
+                    ? props[prop] === true
                         ? handler()
                         : handler(props[prop])
                     : props[prop]
