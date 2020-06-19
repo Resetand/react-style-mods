@@ -8,9 +8,6 @@
     "files": [
         "dist/**/*"
     ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "keywords": [
         "react",
         "styles",
@@ -19,8 +16,8 @@
         "modifiers"
     ],
     "prepublish": "tsc",
-    "author": "",
-    "license": "ISC",
+    "author": "Resetand",
+    "license": "MIT",
     "dependencies": {
         "react": "16.13.1"
     },

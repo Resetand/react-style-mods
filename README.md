@@ -10,7 +10,7 @@ I found myself writing and duplicate similar code, when I want to add some spaci
 ```
 
 How did I usually solve these problems?
-I can adding new props to my Component and imperative describes how to compose styles
+I can add new props to my Component and imperative describes how to compose styles
 
 ```
 const Component = (props) => {
@@ -49,7 +49,7 @@ const _Component: FC<{ style?: React.CSSProperties }> = ({style, ...props}) => {
 const mods = createStyleMods({
     center: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
     padding: (value: number = 44) => ({ padding: value }),
-    margin: (value: number) => ({ padding: value }),
+    margin: (value: number) => ({ margin: value }),
     // ...
 });
 

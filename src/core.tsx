@@ -1,23 +1,7 @@
-/* eslint-disable */
 import * as React from 'react';
-import { ComponentProps, CSSProperties, FC } from 'react';
+import { CSSProperties, FC } from 'react';
+import { ModsMap, WrapperProps } from './types';
 import { isFunction } from './utils';
-
-type ModsMap<TStyles = CSSProperties> = Record<string, TStyles | ((propValue: any) => TStyles)>;
-
-type AnyFunction = (...args: any[]) => any;
-
-type InferParam<Fn extends AnyFunction> = {
-    [P in keyof Parameters<Fn>]: {} extends Pick<Parameters<Fn>, P>
-        ? Parameters<Fn>[0] | true
-        : Parameters<Fn>[0];
-}[0];
-
-export type ModsProps<M extends ModsMap<any>> = {
-    [P in keyof M]+?: M[P] extends AnyFunction ? InferParam<M[P]> : true;
-};
-
-type WrapperProps<TC extends FC<any>, M extends ModsMap<any>> = ComponentProps<TC> & ModsProps<M>;
 
 export const createStyleMods = <
     TStyles extends any = CSSProperties,
@@ -26,8 +10,8 @@ export const createStyleMods = <
     map: TMap
 ) => map;
 
-export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
-    return <TComponent extends FC<{ style: any }>>(Component: TComponent) => {
+export const withStyleMods = <TMap extends ModsMap>(map: TMap) => {
+    return <TComponent extends FC<{ style?: any }>>(Component: TComponent) => {
         const Wrapper: FC<WrapperProps<TComponent, TMap>> = (props) => {
             const [style, restProps] = selectStyles(props, map);
             return <Component {...restProps} style={style} />;
