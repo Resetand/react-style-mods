@@ -2,20 +2,20 @@
 
 ## Why?
 
-I found myself writing and duplicate similar code, when I want to add some spacing between elements or center element
+I found myself duplicate similar small pieces of styles, like add spacing or center element
 
 ```
-<Component style={{marginLeft: SOME_STYLE_GUIDE_CONSTANT }}>...</Component>
+<Component style={{ marginLeft: 10 }}>...</Component>
 <Component style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>...</Component>
 ```
 
 How did I usually solve these problems?
-I can add new props to my Component and imperative describes how to compose styles
+I can add new props to my Component and describe how to compose styles
 
 ```
 const Component = (props) => {
     styles = {
-        ...props.styles
+        ...props.style
         ...(props.center ? {display: 'flex', alignItems: 'center',justifyContent: 'center'} : {})
         // and so on
     }
@@ -24,15 +24,21 @@ const Component = (props) => {
 
 ```
 
-There are some problems with it - it's too "imperatively" and it's difficult to share this logic between differents UI component like this one.
-
-Also, I can create CSS classes and apply them, but this solution won't be work with react native and it's not strict typing if you using typescript or flow. Finally I can extract repetitive styles to variables or object, but I found difficult to compose such styles with spread
+But it's too "imperatively" and it's difficult to share such logic between differents UI components.
+Also I can create CSS classes and apply them, but you can't pass dynamic params into your css and it also won't be work with react native.
+Finally I can extract repetitive styles pieces and create bunch of styles constructors, but I find uncomfortable to use such things
 
 ## How does it work?
 
-You create a map of **modifiers** and apply them to component via HOC. Then use as a regular props like `<Component mod1 mod2={<value>} ... />`
+Create a map of **modifiers** and apply them to component via `withStyleMods` HOC. Then use as a regular props like `<Component mod1 mod2={<value>} ... />` when each props
+name correspond to key in your map
 
-Modifiers can be just a style object or a function, in second case value you passed to this prop will be use as function paramer
+Modifiers can be just a style value or a function that returns style value, in first case prop in your component use as boolean flag, if it function value of prop passed as
+first arg into modifier function
+
+Ultimately all styles will be composed and passed as `style` prop to the component that you passed `withStyleMods` HOC
+
+All types will be inferring if you use ts or flow
 
 ## Examples
 
@@ -85,13 +91,13 @@ const mods = createStyleMods({
 
 interface ComponentProps extends ModsProps<typeof mods> {
     myProps: number
-    style: React.CSSProperties
+    style?: React.CSSProperties
 }
 /*
 ComponentProps = {
-    padding?: true | number,
-    defaultMargin: true,
-    style: React.CSSProperties,
+    padding?: boolean | number,
+    defaultMargin: boolean,
+    style?: React.CSSProperties,
     myProps: number
 } */
 

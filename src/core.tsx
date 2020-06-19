@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CSSProperties, FC } from 'react';
-import { ModsMap, WrapperProps } from './types';
-import { isFunction } from './utils';
+import { ModsMap, WrapperProps, AnyFunction } from './types';
+import { isFunction, isBoolean } from './utils';
 
 export const createStyleMods = <
     TStyles extends any = CSSProperties,
@@ -21,29 +21,29 @@ export const withStyleMods = <TMap extends ModsMap>(map: TMap) => {
     };
 };
 
+const resolveProp = (prop: any, mod: AnyFunction | object) => {
+    if (isFunction(mod)) {
+        if (isBoolean(prop)) {
+            return prop === true ? mod() : {};
+        }
+        return mod(prop);
+    }
+    return prop ? mod : {};
+};
+
 const selectStyles = (props: any, mods: ModsMap<any>) => {
-    let styles: Record<string, any> = {};
+    let style: Record<string, any> = {};
     let restProps: any = {};
     for (const prop in props) {
-        if (!props.hasOwnProperty(prop)) {
-            continue;
-        }
-        if (prop in mods) {
-            const handler = mods[prop];
-            const addition = isFunction(handler)
-                ? props[prop] === true
-                    ? handler()
-                    : handler(props[prop])
-                : props[prop]
-                ? handler
-                : {};
-
-            styles = Object.assign(styles, addition);
-        } else if (prop === 'style') {
-            styles = Object.assign(styles, props[prop]);
-        } else {
-            restProps = Object.assign(restProps, { [prop]: props[prop] });
+        if (props.hasOwnProperty(prop)) {
+            if (prop in mods) {
+                style = Object.assign(style, resolveProp(props[prop], mods[prop]));
+            } else if (prop === 'style') {
+                style = Object.assign(style, props[prop]);
+            } else {
+                restProps = Object.assign(restProps, { [prop]: props[prop] });
+            }
         }
     }
-    return [styles, restProps];
+    return [style, restProps];
 };
