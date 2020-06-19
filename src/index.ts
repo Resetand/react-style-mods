@@ -1,3 +1,2 @@
-import { createStyleMods, withStyleMods } from './core';
-
-export { createStyleMods, withStyleMods };
+export { createStyleMods, withStyleMods } from './core';
+export type { ModsProps } from './core';
