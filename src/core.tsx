@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { FC } from 'react';
-import { AnyFunction, ModsMap, WrapperProps, InferStyleValue } from './types';
+import { AnyFunction, ModsMap, InferStyleValue, ModsProps } from './types';
 import { isBoolean, isFunction } from './utils';
 
 export function styleModsFactory<StylesValue>() {
     return function <
-        TStyleValue = StylesValue,
+        TStyleValue extends StylesValue,
         TMap extends ModsMap<TStyleValue> = ModsMap<TStyleValue>
     >(map: TMap) {
         return map;
@@ -13,16 +12,16 @@ export function styleModsFactory<StylesValue>() {
 }
 
 export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
-    return <TComponent extends FC<{ style?: any }>>(Component: TComponent) => {
-        const Wrapper: FC<WrapperProps<TComponent, TMap>> = (props) => {
+    return <TProps extends { style?: InferStyleValue<TMap> }>(
+        Component: React.ComponentType<TProps>
+    ) => {
+        return (props: TProps & ModsProps<TMap>) => {
             const [style, restProps] = selectStyles(props, map);
             if (Object.keys(style)) {
                 return <Component {...restProps} style={style} />;
             }
             return <Component {...restProps} />;
         };
-
-        return Wrapper;
     };
 };
 

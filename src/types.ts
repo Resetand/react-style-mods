@@ -14,7 +14,9 @@ export type ModsProps<M extends ModsMap<any>> = {
     [P in keyof M]+?: M[P] extends AnyFunction ? InferParam<M[P]> : boolean;
 };
 
-export type WrapperProps<TC extends FC<any>, M extends ModsMap<any>> = ComponentProps<TC> &
-    ModsProps<M>;
+export type WrapperProps<
+    TC extends React.ComponentType<any>,
+    M extends ModsMap<any>
+> = ComponentProps<TC> & ModsProps<M>;
 
 export type InferStyleValue<TMap extends ModsMap<any>> = TMap extends ModsMap<infer T> ? T : never;
