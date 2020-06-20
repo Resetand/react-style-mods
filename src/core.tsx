@@ -12,9 +12,7 @@ export function styleModsFactory<StylesValue>() {
 }
 
 export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
-    return <TProps extends { style?: InferStyleValue<TMap> }>(
-        Component: React.ComponentType<TProps>
-    ) => {
+    return <TProps extends { style?: any }>(Component: React.ComponentType<TProps>) => {
         return (props: TProps & ModsProps<TMap>) => {
             const [style, restProps] = selectStyles(props, map);
             if (Object.keys(style)) {

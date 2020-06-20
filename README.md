@@ -104,21 +104,8 @@ ComponentProps = {
     myProps: number
 } */
 
-```
-
-#### Use custom style value type
-
-By default style type is React.CSSProperties, you can override it if you use react native for instance
-
-```
-import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
-
-type RNStyles = ViewStyle | TextStyle | ImageStyle
-styleMods<RNStyles>({
-
-})
-```
 
 ## License
 
 MIT License
+```
