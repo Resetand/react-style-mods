@@ -10,13 +10,14 @@ export function styleModsFactory<StylesValue>() {
 
 export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
     return <TProps extends { style?: any }>(Component: React.ComponentType<TProps>) => {
-        return (props: TProps & ModsProps<TMap>) => {
+        const Wrapper: React.FC<TProps & ModsProps<TMap>> = (props) => {
             const [style, restProps] = selectStyles(props, map);
             if (Object.keys(style)) {
                 return <Component {...restProps} style={style} />;
             }
             return <Component {...restProps} />;
         };
+        return Wrapper;
     };
 };
 
