@@ -1,4 +1,4 @@
-import { FC, ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 
 export type ModsMap<TStyles> = Record<string, TStyles | ((propValue: any) => TStyles)>;
 
@@ -19,4 +19,4 @@ export type WrapperProps<
     M extends ModsMap<any>
 > = ComponentProps<TC> & ModsProps<M>;
 
-export type InferStyleValue<TMap extends ModsMap<any>> = TMap extends ModsMap<infer T> ? T : never;
+// export type InferStyleValue<TMap extends ModsMap<any>> = TMap extends ModsMap<infer T> ? T : never;

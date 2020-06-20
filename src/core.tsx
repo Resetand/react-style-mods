@@ -3,10 +3,7 @@ import { AnyFunction, ModsMap, ModsProps } from './types';
 import { isBoolean, isFunction } from './utils';
 
 export function styleModsFactory<StylesValue>() {
-    return function <
-        TStyleValue extends StylesValue,
-        TMap extends ModsMap<TStyleValue> = ModsMap<TStyleValue>
-    >(map: TMap) {
+    return <TMap extends ModsMap<TStyleValue>, TStyleValue extends StylesValue>(map: TMap) => {
         return map;
     };
 }
