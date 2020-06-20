@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnyFunction, ModsMap, InferStyleValue, ModsProps } from './types';
+import { AnyFunction, ModsMap, ModsProps } from './types';
 import { isBoolean, isFunction } from './utils';
 
 export function styleModsFactory<StylesValue>() {
