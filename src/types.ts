@@ -1,9 +1,6 @@
-import { CSSProperties, FC, ComponentProps } from 'react';
+import { FC, ComponentProps } from 'react';
 
-export type ModsMap<TStyles = CSSProperties> = Record<
-    string,
-    TStyles | ((propValue: any) => TStyles)
->;
+export type ModsMap<TStyles> = Record<string, TStyles | ((propValue: any) => TStyles)>;
 
 export type AnyFunction = (...args: any[]) => any;
 
@@ -19,3 +16,5 @@ export type ModsProps<M extends ModsMap<any>> = {
 
 export type WrapperProps<TC extends FC<any>, M extends ModsMap<any>> = ComponentProps<TC> &
     ModsProps<M>;
+
+export type InferStyleValue<TMap extends ModsMap<any>> = TMap extends ModsMap<infer T> ? T : never;

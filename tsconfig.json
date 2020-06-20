@@ -4,8 +4,10 @@
         "jsx": "react",
         "declaration": true,
         "removeComments": true,
-        "outDir": "dist",
         "lib": ["es6", "dom"],
+        "sourceMap": true,
+        "inlineSources": true,
+        "outDir": "dist",
         "module": "CommonJS"
     }
 }

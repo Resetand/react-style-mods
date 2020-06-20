@@ -1,20 +1,25 @@
 import * as React from 'react';
-import { CSSProperties, FC } from 'react';
-import { ModsMap, WrapperProps, AnyFunction } from './types';
-import { isFunction, isBoolean } from './utils';
+import { FC } from 'react';
+import { AnyFunction, ModsMap, WrapperProps, InferStyleValue } from './types';
+import { isBoolean, isFunction } from './utils';
 
-export const createStyleMods = <
-    TStyles extends any = CSSProperties,
-    TMap extends ModsMap<TStyles> = ModsMap<TStyles>
->(
-    map: TMap
-) => map;
+export function styleModsFactory<StylesValue>() {
+    return function <
+        TStyleValue = StylesValue,
+        TMap extends ModsMap<TStyleValue> = ModsMap<TStyleValue>
+    >(map: TMap) {
+        return map;
+    };
+}
 
-export const withStyleMods = <TMap extends ModsMap>(map: TMap) => {
+export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
     return <TComponent extends FC<{ style?: any }>>(Component: TComponent) => {
         const Wrapper: FC<WrapperProps<TComponent, TMap>> = (props) => {
             const [style, restProps] = selectStyles(props, map);
-            return <Component {...restProps} style={style} />;
+            if (Object.keys(style)) {
+                return <Component {...restProps} style={style} />;
+            }
+            return <Component {...restProps} />;
         };
 
         return Wrapper;

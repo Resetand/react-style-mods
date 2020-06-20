@@ -5,9 +5,12 @@
 I found myself duplicate similar small pieces of styles, like add spacing or center element
 
 ```
-<Component style={{ marginLeft: 10 }}>...</Component>
+<Component style={{ marginTop: 10, marginRight: 10 }}>...</Component>
+<Component style={{ marginLeft: STYLE_GUIDE_CONST, marginRight: STYLE_GUIDE_CONST  }}>...</Component>
 <Component style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>...</Component>
 ```
+
+\*also I'm allergic to pass object props :)
 
 How did I usually solve these problems?
 I can add new props to my Component and describe how to compose styles
@@ -25,7 +28,7 @@ const Component = (props) => {
 ```
 
 But it's too "imperatively" and it's difficult to share such logic between differents UI components.
-Also I can create CSS classes and apply them, but you can't pass dynamic params into your css and it also won't be work with react native.
+Also I can create CSS classes and apply them, but you can't pass dynamic params into your classes and it also won't be work with react native.
 Finally I can extract repetitive styles pieces and create bunch of styles constructors, but I find uncomfortable to use such things
 
 ## How does it work?
@@ -42,17 +45,17 @@ All types will be inferring if you use ts or flow
 
 ## Examples
 
-Basic usage
+#### Basic usage
 
 ```
 import React, { FC } from 'react';
-import { createStyleMods, withStyleMods } from 'react-styles-mods';
+import { styleMods, withStyleMods } from 'react-styles-mods';
 
 const _Component: FC<{ style?: React.CSSProperties }> = ({style, ...props}) => {
     return <div style={style} {...props} />;
 };
 
-const mods = createStyleMods({
+const mods = styleMods({
     center: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
     padding: (value: number = 44) => ({ padding: value }),
     margin: (value: number) => ({ margin: value }),
@@ -69,21 +72,21 @@ const Component = withStyleMods(mods)(_Component);
 
 ```
 
-Use in place
+#### Use in place
 
 ```
-const Component2 = withStyleMods({
+const Component = withStyleMods({
     padding: (value: number = 44) => ({ padding: value }),
     // ...
 })((props) => <div {...props} />);
 ```
 
-Infer props type
+#### Infer props type
 
 ```
-import { ModsProps, createStyleMods } from 'react-styles-mods';
+import { ModsProps, styleMods } from 'react-styles-mods';
 
-const mods = createStyleMods({
+const mods = styleMods({
     padding: (value: number = 44) => ({ padding: value }),
     defaultMargin: {margin: 20}
 });
@@ -103,13 +106,15 @@ ComponentProps = {
 
 ```
 
-Change style type (default React.CSSProperties)
+#### Use custom style value type
+
+By default style type is React.CSSProperties, you can override it if you use react native for instance
 
 ```
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
 
 type RNStyles = ViewStyle | TextStyle | ImageStyle
-createStyleMods<RNStyles>({
+styleMods<RNStyles>({
 
 })
 ```
