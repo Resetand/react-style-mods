@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { AnyFunction, ModsMap, ModsProps } from './types';
+import { ComponentType, forwardRef } from 'react';
+import { AnyFunction, BaseProps, ModsMap, Wrapper } from './types';
 import { isBoolean, isFunction } from './utils';
 
 export function styleModsFactory<StylesValue>() {
@@ -9,15 +10,17 @@ export function styleModsFactory<StylesValue>() {
 }
 
 export const withStyleMods = <TMap extends ModsMap<any>>(map: TMap) => {
-    return <TProps extends { style?: any }>(Component: React.ComponentType<TProps>) => {
-        const Wrapper: React.FC<TProps & ModsProps<TMap>> = (props) => {
+    return <P extends BaseProps>(Component: ComponentType<P>): Wrapper<P, TMap> => {
+        return forwardRef<any, any>((props, ref) => {
             const [style, restProps] = selectStyles(props, map);
-            if (Object.keys(style)) {
-                return <Component {...restProps} style={style} />;
-            }
-            return <Component {...restProps} />;
-        };
-        return Wrapper;
+            return (
+                <Component
+                    ref={ref}
+                    {...restProps}
+                    {...(Boolean(Object.keys(style).length) ? { style } : {})}
+                />
+            );
+        });
     };
 };
 
