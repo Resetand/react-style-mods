@@ -105,7 +105,9 @@ ComponentProps = {
 
 ```
 
-### Advance usage
+## Advanced usage
+
+**Type overwriting**
 
 ```
 import { styleModsFactory } from 'react-style-mods';
@@ -120,7 +122,19 @@ const rnMods = rnStyleMods({
     }
 })
 
+```
 
+**Forwarding ref**
+
+```
+import React, { forwardRef } from 'react';
+import { ModsProps, styleMods, withStyleMods } from '@react-style-mods';
+
+const _ComponentWithRef = forwardRef(props, ref => {
+    return
+})
+
+const ComponentWithRef = withStyleMods({/**/})(_ComponentWithRef)
 ```
 
 ## License
