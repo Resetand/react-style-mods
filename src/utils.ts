@@ -1,16 +1,9 @@
 import { CSSProperties } from "react";
-import { ModsMap } from "./types";
+import { ModsMap, ValueModFactory } from "./types";
 
-function valueModFactory<T>() {
-    function createValueModImpl<P extends keyof T>(key: P): (value: T[P]) => T;
-    function createValueModImpl<P extends keyof T>(key: P, defaultValue: T[P]): (value?: T[P]) => T;
-    function createValueModImpl(key: string, defaultValue?: any) {
-        return (value: any) => ({ [key]: value ?? defaultValue });
-    }
-    return createValueModImpl;
-}
-
-export const cssValueMod = valueModFactory<CSSProperties>();
+export const valueModFactory: ValueModFactory<CSSProperties> = (key: string, defaultValue?: any) => {
+    return (value: any) => ({ [key]: value ?? defaultValue });
+};
 
 export const resolveProp = (prop: any, mod: any) => {
     if (mod instanceof Function) {

@@ -32,3 +32,8 @@ export type StyleMods<TMods extends ModsMap<any>> = {
 export type ModsExtendedComponent<TProps, TMap extends ModsMap<any>> = FC<
     TProps & ModsProps<TMap> & (React.RefAttributes<any> | React.ClassAttributes<any>)
 >;
+
+export interface ValueModFactory<T> {
+    <P extends keyof T>(key: P): (value: T[P]) => T;
+    <P extends keyof T>(key: P, defaultValue: T[P]): (value?: T[P]) => T;
+}

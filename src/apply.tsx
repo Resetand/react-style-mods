@@ -1,8 +1,8 @@
-import React, { forwardRef } from "react";
+import React, { CSSProperties, forwardRef } from "react";
 import { ApplyModsHOC, ModsMap, StyleMods } from "./types";
 import { selectStyles } from "./utils";
 
-export const createStyleMods = <TModsMap extends ModsMap<any>>(mods: TModsMap): StyleMods<TModsMap> => ({
+export const createStyleMods = <TModsMap extends ModsMap<CSSProperties>>(mods: TModsMap): StyleMods<TModsMap> => ({
     _mods: mods,
 });
 

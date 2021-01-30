@@ -1,3 +1,3 @@
 export { applyStyleMods, createStyleMods } from "./apply";
-export { cssValueMod } from "./utils";
+export { valueModFactory } from "./utils";
 export type { ModsProps } from "./types";
