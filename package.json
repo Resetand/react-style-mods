@@ -7,7 +7,8 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
-        "test": "jest"
+        "test": "jest",
+        "prepare": "npm run test && npm run build"
     },
     "files": [
         "dist/**/*"
@@ -19,7 +20,6 @@
         "mods",
         "modifiers"
     ],
-    "prepublish": "npm run test && npm run build",
     "author": "Resetand",
     "license": "MIT",
     "peerDependencies": {
