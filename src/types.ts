@@ -1,19 +1,34 @@
-import { FC } from 'react';
+import { ComponentType, FC } from "react";
+
+// -- Хелперы Для выведения типов --
+
+type AnyFunction = (...args: any[]) => any;
 
 export type ModsMap<TStyles> = Record<string, TStyles | ((propValue: any) => TStyles)>;
 
-export type AnyFunction = (...args: any[]) => any;
-
-export type InferParam<Fn extends AnyFunction> = {
+type InferParam<Fn extends AnyFunction> = {
     // eslint-disable-next-line @typescript-eslint/ban-types
     [P in keyof Parameters<Fn>]: {} extends Pick<Parameters<Fn>, P> ? Parameters<Fn>[0] | boolean : Parameters<Fn>[0];
 }[0];
 
-export type ModsProps<M extends ModsMap<any>> = {
+type ModsPropsWrapped<M extends ModsMap<any>> = {
     [P in keyof M]+?: M[P] extends AnyFunction ? InferParam<M[P]> : boolean;
 };
 
-export type BaseProps = { style?: any };
-export type Wrapper<TProps, TMap extends ModsMap<any>> = FC<
+// ----------------------------
+
+export type ApplyModsHOC = <TModsItems extends StyleMods<any>[]>(
+    ...mods: TModsItems
+) => <P extends { style?: any }>(Component: ComponentType<P>) => ModsExtendedComponent<P, TModsItems[number]["_mods"]>;
+
+export type ModsProps<M extends StyleMods<ModsMap<any>> | ModsMap<any>> = M extends StyleMods<ModsMap<any>>
+    ? ModsPropsWrapped<M["_mods"]>
+    : ModsPropsWrapped<M>;
+
+export type StyleMods<TMods extends ModsMap<any>> = {
+    _mods: TMods;
+};
+
+export type ModsExtendedComponent<TProps, TMap extends ModsMap<any>> = FC<
     TProps & ModsProps<TMap> & (React.RefAttributes<any> | React.ClassAttributes<any>)
 >;

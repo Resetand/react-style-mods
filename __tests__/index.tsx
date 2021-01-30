@@ -1,34 +1,35 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as React from 'react';
-import * as renderer from 'react-test-renderer';
-import { withStyleMods, styleMods } from '../src';
+import React from "react";
+import renderer from "react-test-renderer";
+import { applyStyleMods, createStyleMods } from "../src";
 
 const _Component: React.FC<{ style?: any }> = (props) => <div {...props} />;
 
-test('Forward style', () => {
-    const mods = styleMods({ a: { padding: 10 } });
-    const Component = withStyleMods(mods)(_Component);
-    const tree = renderer.create(<Component a />).toJSON();
-    expect(tree?.props.style).toMatchObject({ padding: 10 });
-});
+describe("react-style-mods packages", () => {
+    test("should pass styles to props", () => {
+        const mods = createStyleMods({ a: { padding: 10 } });
+        const Component = applyStyleMods(mods)(_Component);
+        const tree = renderer.create(<Component a />).toJSON();
+        expect(tree?.props.style).toMatchObject({ padding: 10 });
+    });
 
-test('Empty style', () => {
-    const mods = styleMods({ a: { padding: 10 } });
-    const Component = withStyleMods(mods)(_Component);
-    const tree = renderer.create(<Component />).toJSON();
-    expect(tree?.props.style).toBeUndefined();
-});
+    test("should pass undefined if no styles", () => {
+        const mods = createStyleMods({ a: { padding: 10 } });
+        const Component = applyStyleMods(mods)(_Component);
+        const tree = renderer.create(<Component />).toJSON();
+        expect(tree?.props.style).toBeUndefined();
+    });
 
-test('Func modifier', () => {
-    const mods = styleMods({ a: (value: number) => ({ padding: value }) });
-    const Component = withStyleMods(mods)(_Component);
-    const tree = renderer.create(<Component a={20} />).toJSON();
-    expect(tree?.props.style).toMatchObject({ padding: 20 });
-});
+    test("should pass styles to props via callback modifier", () => {
+        const mods = createStyleMods({ a: (value: number) => ({ padding: value }) });
+        const Component = applyStyleMods(mods)(_Component);
+        const tree = renderer.create(<Component a={20} />).toJSON();
+        expect(tree?.props.style).toMatchObject({ padding: 20 });
+    });
 
-test('Func modifier, default value', () => {
-    const mods = styleMods({ a: (value: number = 5) => ({ padding: value }) });
-    const Component = withStyleMods(mods)(_Component);
-    const tree = renderer.create(<Component a />).toJSON();
-    expect(tree?.props.style).toMatchObject({ padding: 5 });
+    test("should pass styles to props via callback modifier with default value", () => {
+        const mods = createStyleMods({ a: (value: number = 5) => ({ padding: value }) });
+        const Component = applyStyleMods(mods)(_Component);
+        const tree = renderer.create(<Component a />).toJSON();
+        expect(tree?.props.style).toMatchObject({ padding: 5 });
+    });
 });

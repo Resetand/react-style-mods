@@ -1,13 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "ES5",
-    "jsx": "react",
-    "declaration": true,
-    "removeComments": true,
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
-    "inlineSources": true,
-    "outDir": "dist",
-    "module": "CommonJS"
-  }
+    "compilerOptions": {
+        "target": "ES5",
+        "jsx": "react",
+        "declaration": true,
+        "removeComments": true,
+        "lib": ["es6", "dom"],
+        "sourceMap": true,
+        "inlineSources": true,
+        "outDir": "dist",
+        "module": "CommonJS",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+    }
 }
