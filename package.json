@@ -10,9 +10,6 @@
         "test": "jest",
         "prepare": "npm run test && npm run build"
     },
-    "files": [
-        "dist/**/*"
-    ],
     "keywords": [
         "react",
         "styles",
