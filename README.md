@@ -18,7 +18,7 @@ const Component = (props) => {
     styles = {
         ...props.style
         ...(props.center ? {display: 'flex', alignItems: 'center',justifyContent: 'center'} : {}),
-        // and so on
+        // etc
     }
     return ...
 }
@@ -26,6 +26,7 @@ const Component = (props) => {
 ```
 
 But it's too "imperatively" and it's difficult to reuse such logic between differents UI components.
+
 Or I can create CSS classes and apply them, but you can't pass dynamic params into your classes.
 Finally I can extract repetitive styles pieces and create bunch of styles constructors, but I find uncomfortable to use such things
 So I decided to create general convenient solution
@@ -76,9 +77,9 @@ const Component = applyStyleMods(mods)(_Component);
 #### Infer props type
 
 ```
-import { ModsProps, styleMods } from 'react-style-mods';
+import { ModsProps, createStyleMods } from 'react-style-mods';
 
-const mods = styleMods({
+const mods = createStyleMods({
     padding: (value: number = 44) => ({ padding: value }),
     defaultMargin: {margin: 20}
 });
