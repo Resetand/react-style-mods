@@ -4,7 +4,7 @@
 
 I found myself duplicate similar small pieces of styles, like add spacing or center element
 
-```
+```tsx
 <Component style={{ marginTop: 10, marginRight: 10 }}>...</Component>
 <Component style={{ marginLeft: STYLE_GUIDE_CONST, marginRight: STYLE_GUIDE_CONST  }}>...</Component>
 <Component style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>...</Component>
@@ -13,7 +13,7 @@ I found myself duplicate similar small pieces of styles, like add spacing or cen
 How can I solve these problems?
 I can add new props to my Component and describe how to compose styles
 
-```
+```typescript
 const Component = (props) => {
     styles = {
         ...props.style
@@ -47,7 +47,7 @@ All types will be inferring for Typescript
 
 #### Basic usage
 
-```
+```tsx
 import React, { FC } from "react";
 import { createStyleMods, applyStyleMods } from "react-style-mods";
 
@@ -69,25 +69,22 @@ const Component = applyStyleMods(mods)(_Component);
 <Component center padding={5} />; // ->  { padding: 5 , display: 'flex', alignItems: 'center', justifyContent: 'center' };
 <Component style={{ padding: 5 }} padding={25} />; // -> { padding: 25  }
 <Component padding={25} style={{ padding: 5 }} />; // ->  { padding: 5  }
-
 ```
 
 #### Infer props type
 
-```
-import { ModsProps, createStyleMods } from 'react-style-mods';
+```typescript
+import { ModsProps, createStyleMods } from "react-style-mods";
 
 const mods = createStyleMods({
     padding: (value: number = 44) => ({ padding: value }),
-    defaultMargin: {margin: 20}
+    defaultMargin: { margin: 20 },
 });
 
-
 interface ComponentProps extends ModsProps<typeof mods> {
-    myProps: number
-    style?: React.CSSProperties
+    myProps: number;
+    style?: React.CSSProperties;
 }
-
 ```
 
 ## License
