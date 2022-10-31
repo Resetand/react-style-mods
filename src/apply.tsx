@@ -7,8 +7,7 @@ export const createStyleMods = <TModsMap extends ModsMap<CSSProperties>>(mods: T
 });
 
 /**
- * Добавляет компонент обертку для обработки модификаторов:
- * собирает все модификаторы и применяет их
+ * Hight Order Component wrapper to apply modifiers to a Component
  */
 export const applyStyleMods: ApplyModsHOC = (...modsItems) => {
     const mods: ModsMap<any> = modsItems.reduce((acc, x) => ({ ...acc, ...x._mods }), {});

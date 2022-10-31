@@ -47,11 +47,9 @@ All types will be inferring for Typescript
 
 #### Basic usage
 
-applyStyleMods, createStyleMods
-
 ```
 import React, { FC } from "react";
-import { createStyleMods, applyStyleMods } from "./index";
+import { createStyleMods, applyStyleMods } from "react-style-mods";
 
 const _Component: FC<{ style?: React.CSSProperties }> = ({ style, ...props }) => {
     return <div style={style} {...props} />;

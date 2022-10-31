@@ -1,9 +1,4 @@
-import { CSSProperties } from "react";
-import { ModsMap, ValueModFactory } from "./types";
-
-export const valueModFactory: ValueModFactory<CSSProperties> = (key: string, defaultValue?: any) => {
-    return (value: any) => ({ [key]: value ?? defaultValue });
-};
+import { ModsMap } from "./types";
 
 export const resolveProp = (prop: any, mod: any) => {
     if (mod instanceof Function) {
