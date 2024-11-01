@@ -1,92 +1,151 @@
-# React Style Mods
+# react-style-mods
 
-## Why?
+Effortlessly manage conditional inline styles in your React components!
 
-I found myself duplicate similar small pieces of styles, like add spacing or center element
+## Introduction
+
+`react-style-mods` is a lightweight utility that simplifies the process of applying conditional inline styles (mods) to your React components based on props.
+
+## Features
+
+-   **Simple Mod Definitions**: Define your styles once and reuse them across components.
+-   **Conditional Styles**: Apply styles dynamically based on boolean props or parameters.
+-   **TypeScript Support**: Enjoy full type safety when defining and using mods.
+-   **Zero Dependencies**: Minimal overhead with no external dependencies.
+
+## Installation
+
+Install via npm or yarn:
+
+```bash
+npm install react-style-mods
+```
+
+or
+
+```bash
+yarn add react-style-mods
+```
+
+## Quick Start
+
+### 1. Define Your Mods
+
+Use `defineStyleMods` to create a set of style modifications:
 
 ```tsx
-<Component style={{ marginTop: 10, marginRight: 10 }}>...</Component>
-<Component style={{ marginLeft: STYLE_GUIDE_CONST, marginRight: STYLE_GUIDE_CONST  }}>...</Component>
-<Component style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>...</Component>
+import { defineStyleMods } from "react-style-mods";
+
+const mods = defineStyleMods({
+    // Static mod
+    primary: { backgroundColor: "blue", color: "white" },
+
+    // Dynamic mod with a parameter
+    size: (size: "small" | "large") => ({
+        fontSize: size === "small" ? "12px" : "24px",
+    }),
+
+    margin: (margin: number = 10) => ({
+        margin: `${margin}px`,
+    }),
+});
 ```
 
-How can I solve these problems?
-I can add new props to my Component and describe how to compose styles
+### 2. Wrap Your Component
 
-```typescript
-const Component = (props) => {
-    styles = {
-        ...props.style
-        ...(props.center ? {display: 'flex', alignItems: 'center',justifyContent: 'center'} : {}),
-        // etc
-    }
-    return ...
-}
+Wrap your component with `withStyleMods` to apply the mods:
 
+```tsx
+import React from "react";
+import { withStyleMods } from "react-style-mods";
+
+const Button = ({ style, children, ...props }) => (
+    <button style={style} {...props}>
+        {children}
+    </button>
+);
+
+const StyledButton = withStyleMods(mods, Button);
 ```
 
-But it's too "imperatively" and it's difficult to reuse such logic between differents UI components.
+### 3. Use the Component with Mods
 
-Or I can create CSS classes and apply them, but you can't pass dynamic params into your classes.
-Finally I can extract repetitive styles pieces and create bunch of styles constructors, but I find uncomfortable to use such things
-So I decided to create general convenient solution
+Now, you can apply mods directly via props:
 
-## How does it work?
+```jsx
+<StyledButton primary margin>Primary Button</StyledButton>
+<StyledButton size="large" margin>Large Button</StyledButton>
+<StyledButton disabled margin={30}>Disabled Button</StyledButton>
+```
 
-Create a map of **modifiers** and apply them to component via `applyStyleMods` HOC. Then use as a regular props like `<Component mod1 mod2={<value>} ... />` when each prop
-name correspond to key in your map
+The styles will be applied conditionally based on the props you pass with minimum runtime overhead.
 
-Modifiers can be just a style value or a function that returns style value. In first case prop in your component use as boolean flag, if it function value of prop passed as
-first arg into modifier function
+## TypeScript Support
 
-Ultimately all styles will be composed and passed as `style` prop to the component that you passed `withStyleMods` HOC
+`react-style-mods` provides full TypeScript support, ensuring that your mods and components are type-safe.
 
-All types will be inferring for Typescript
+### Using `satisfies` (TypeScript >= 4.9)
+
+If you're using TypeScript 4.9 or newer, you can use the `satisfies` operator for even better type inference:
+
+```tsx
+const mods = {
+    primary: { backgroundColor: "blue", color: "white" },
+    size: (size: "small" | "large") => ({
+        fontSize: size === "small" ? "12px" : "24px",
+    }),
+} satisfies StyleModsDefinition;
+```
+
+## API Reference
+
+### `defineStyleMods(mods)`
+
+Defines a set of style modifications.
+
+-   **mods**: An object where each key is a mod name, and each value is either:
+    -   A style object (`React.CSSProperties`).
+    -   A function that returns a style object, optionally taking a parameter.
+
+### `withStyleMods(mods, Component)`
+
+Wraps a component to enable style mods.
+
+-   **mods**: The mods defined using `defineStyleMods`.
+-   **Component**: The React component to wrap.
+
+### `createModsStylesFromProps(props, mods)`
+
+Creates a style object based on the props and mods provided.
 
 ## Examples
 
-#### Basic usage
+### Conditional Styling
 
-```tsx
-import React, { FC } from "react";
-import { createStyleMods, applyStyleMods } from "react-style-mods";
-
-const _Component: FC<{ style?: React.CSSProperties }> = ({ style, ...props }) => {
-    return <div style={style} {...props} />;
-};
-
-const mods = createStyleMods({
-    center: { display: "flex", alignItems: "center", justifyContent: "center" },
-    padding: (value: number = 44) => ({ padding: value }),
-    margin: (value: number) => ({ margin: value }),
-    // ...
-});
-
-const Component = applyStyleMods(mods)(_Component);
-
-// cases
-<Component center padding />; // ->  { padding: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }
-<Component center padding={5} />; // ->  { padding: 5 , display: 'flex', alignItems: 'center', justifyContent: 'center' };
-<Component style={{ padding: 5 }} padding={25} />; // -> { padding: 25  }
-<Component padding={25} style={{ padding: 5 }} />; // ->  { padding: 5  }
+```jsx
+<StyledButton primary>Primary Button</StyledButton>
 ```
 
-#### Infer props type
+Applies the `primary` styles when the `primary` prop is truthy.
 
-```typescript
-import { ModsProps, createStyleMods } from "react-style-mods";
+### Dynamic Styling with Parameters
 
-const mods = createStyleMods({
-    padding: (value: number = 44) => ({ padding: value }),
-    defaultMargin: { margin: 20 },
-});
-
-interface ComponentProps extends ModsProps<typeof mods> {
-    myProps: number;
-    style?: React.CSSProperties;
-}
+```jsx
+<StyledButton size="small">Small Button</StyledButton>
 ```
+
+Applies styles based on the value of the `size` prop.
+
+### Combining Mods
+
+```jsx
+<StyledButton primary size="large">
+    Large Primary Button
+</StyledButton>
+```
+
+Combines multiple mods for complex styling.
 
 ## License
 
-MIT License
+[MIT License](LICENSE)
