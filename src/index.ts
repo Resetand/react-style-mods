@@ -13,7 +13,7 @@ type Dictionary<T = any> = Record<PropertyKey, T>;
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
 type InferStyleModsStyleObjectFromComponent<TComponent extends React.ComponentType<any>> = TComponent extends {
-    __mods__?: infer TMods extends StyleModsDefinition;
+    _?: infer TMods extends StyleModsDefinition;
 }
     ? InferStyleModsStyleObject<TMods>
     : {};
@@ -35,12 +35,10 @@ type InferModsPropsByMods<TMods extends StyleModsDefinition> = {
 };
 
 export type InferModsProps<T extends StyleModsDefinition | ((Component: React.ComponentType<any>) => any) | StyleModsComponent<any, any>> =
-    T extends StyleModsDefinition
+    T extends { _?: infer TStyleModsDefinition extends StyleModsDefinition }
+        ? InferModsPropsByMods<TStyleModsDefinition>
+        : T extends StyleModsDefinition
         ? InferModsPropsByMods<T>
-        : T extends (Component: React.ComponentType<any>) => any
-        ? InferModsPropsByMods<InferStyleModsStyleFromHocFactory<T>>
-        : T extends StyleModsComponent<any, any>
-        ? InferModsPropsByMods<InferStyleModsStyleObjectFromComponent<T>>
         : never;
 
 type InferStyleModsStyleObject<TMods extends StyleModsDefinition> = TMods extends StyleModsDefinition<infer TStyles>
@@ -52,7 +50,7 @@ type StyleModsComponent<
     TMods extends StyleModsDefinition
 > = hoistNonReactStatics.NonReactStatics<TComponent> &
     React.ForwardRefExoticComponent<InferModsProps<TMods> & React.ComponentProps<TComponent>> &
-    React.RefAttributes<React.ComponentProps<TComponent>> & { __mods__?: TMods };
+    React.RefAttributes<React.ComponentProps<TComponent>> & { _?: TMods };
 
 type WithStyleMods = {
     <TMods extends StyleModsDefinition, TComponent extends React.ComponentType<any>>(
@@ -60,9 +58,10 @@ type WithStyleMods = {
         Component: TComponent
     ): StyleModsComponent<TComponent, TMods>;
 
-    <TMods extends StyleModsDefinition>(mods: TMods): <TComponent extends React.ComponentType<any>>(
-        Component: TComponent
-    ) => StyleModsComponent<TComponent, TMods>;
+    <TMods extends StyleModsDefinition>(mods: TMods): {
+        <TComponent extends React.ComponentType<any>>(Component: TComponent): StyleModsComponent<TComponent, TMods>;
+        _?: TMods;
+    };
 };
 
 // ----------------------------------------------------------------------------------------------------------------
