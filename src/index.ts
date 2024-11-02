@@ -87,7 +87,7 @@ function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods ext
     const restProps = {} as Omit<TProps, keyof TMods>;
     let isEmpty = true;
 
-    for (const prop of Object.keys(props)) {
+    for (const prop in props) {
         if (Object.prototype.hasOwnProperty.call(props, prop)) {
             const propValue = props[prop];
 
@@ -95,7 +95,7 @@ function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods ext
                 Object.assign(style, resolveProp(propValue, mods[prop]));
                 isEmpty = false;
             } else {
-                restProps[prop] = propValue;
+                restProps[prop as any] = propValue;
             }
         }
     }
