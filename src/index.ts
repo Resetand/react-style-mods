@@ -84,23 +84,18 @@ function resolveProp(prop: any, mod: any) {
  */
 function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods extends StyleModsDefinition>(props: TProps, mods: TMods) {
     const style = {} as InferStyleModsStyleObject<TMods>;
-    const restProps = {} as Omit<TProps, keyof TMods>;
+    const restProps = { ...props };
     let isEmpty = true;
 
-    for (const prop in props) {
-        if (Object.prototype.hasOwnProperty.call(props, prop)) {
-            const propValue = props[prop];
-
-            if (prop in mods) {
-                Object.assign(style, resolveProp(propValue, mods[prop]));
-                isEmpty = false;
-            } else {
-                restProps[prop as any] = propValue;
-            }
+    for (const modKey in mods) {
+        if (modKey in props) {
+            isEmpty = false;
+            Object.assign(style, resolveProp(props[modKey], mods[modKey]));
+            delete restProps[modKey];
         }
     }
 
-    // prevent overriding the style prop
+    // Exclude the 'style' prop to prevent overriding
     delete restProps["style"];
 
     if (props["style"] && typeof props["style"] === "object") {
