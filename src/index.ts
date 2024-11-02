@@ -93,10 +93,22 @@ export function defineStyleMods<T extends StyleModsDefinition>(mods: T) {
     return mods;
 }
 
-export function withStyleMods<TMods extends StyleModsDefinition, TComponent extends React.ComponentType<any>>(
-    mods: TMods,
-    Component: TComponent
-): StyleModsComponent<TComponent, TMods> {
+type WithStyleMods = {
+    <TMods extends StyleModsDefinition, TComponent extends React.ComponentType<any>>(
+        mods: TMods,
+        Component: TComponent
+    ): StyleModsComponent<TComponent, TMods>;
+
+    <TMods extends StyleModsDefinition>(mods: TMods): <TComponent extends React.ComponentType<any>>(
+        Component: TComponent
+    ) => StyleModsComponent<TComponent, TMods>;
+};
+
+export const withStyleMods: WithStyleMods = function withStyleMods(mods: StyleModsDefinition, Component?: React.ComponentType<any>) {
+    if (Component === undefined) {
+        return (Component) => withStyleMods(mods, Component);
+    }
+
     const StyleModsWrapper = forwardRef(function StyleModsWrapper(props: any, ref: React.Ref<any>) {
         const [style, restProps] = createModsStylesFromProps(props, mods);
         if (typeof props.style === "object" && props.style !== null) {
@@ -110,4 +122,4 @@ export function withStyleMods<TMods extends StyleModsDefinition, TComponent exte
     StyleModsWrapper.displayName = `withStyleMods(${Component.displayName || Component.name || "Component"})`;
 
     return StyleModsWrapper as any;
-}
+};

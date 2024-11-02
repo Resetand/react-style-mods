@@ -79,4 +79,11 @@ describe("react-style-mods", () => {
             myProp: true,
         });
     });
+
+    test("should curry withStyleMods factory", () => {
+        const MyComponent = () => null;
+        const Comp = withStyleMods(mods)(MyComponent);
+
+        expect(Comp.displayName).toBe("withStyleMods(MyComponent)");
+    });
 });
