@@ -100,8 +100,11 @@ function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods ext
         }
     }
 
-    if (props.style && typeof props.style === "object") {
-        Object.assign(style, props.style);
+    // prevent overriding the style prop
+    delete restProps["style"];
+
+    if (props["style"] && typeof props["style"] === "object") {
+        Object.assign(style, props["style"]);
         isEmpty = false;
     }
 
