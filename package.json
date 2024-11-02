@@ -1,6 +1,6 @@
 {
     "name": "react-style-mods",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "React library for creating style modifiers props",
     "homepage": "https://github.com/Resetand/react-style-mods",
     "main": "dist/index.cjs.js",
