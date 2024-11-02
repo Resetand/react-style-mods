@@ -12,6 +12,37 @@ export type StyleModsDefinition<TStyles extends Dictionary = React.CSSProperties
 type Dictionary<T = any> = Record<PropertyKey, T>;
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
+type InferStyleModsStyleObjectFromComponent<TComponent extends React.ComponentType<any>> = TComponent extends {
+    __mods__?: infer TMods extends StyleModsDefinition;
+}
+    ? InferStyleModsStyleObject<TMods>
+    : {};
+
+type InferStyleModsStyleFromHocFactory<TFactory extends (Component: React.ComponentType<any>) => any> = TFactory extends (
+    Component: React.ComponentType<any>
+) => infer TStyleModsComponent
+    ? TStyleModsComponent extends StyleModsComponent<infer _, infer TMods>
+        ? InferStyleModsStyleObject<TMods>
+        : never
+    : never;
+
+type InferModsPropsByMods<TMods extends StyleModsDefinition> = {
+    [K in keyof TMods]+?: TMods[K] extends (propValue?: infer P) => any // factory with optional prop (default value)
+        ? boolean | P
+        : TMods[K] extends (propValue: infer P) => any // factory with required prop
+        ? P
+        : boolean; // static mod
+};
+
+export type InferModsProps<T extends StyleModsDefinition | ((Component: React.ComponentType<any>) => any) | StyleModsComponent<any, any>> =
+    T extends StyleModsDefinition
+        ? InferModsPropsByMods<T>
+        : T extends (Component: React.ComponentType<any>) => any
+        ? InferModsPropsByMods<InferStyleModsStyleFromHocFactory<T>>
+        : T extends StyleModsComponent<any, any>
+        ? InferModsPropsByMods<InferStyleModsStyleObjectFromComponent<T>>
+        : never;
+
 type InferStyleModsStyleObject<TMods extends StyleModsDefinition> = TMods extends StyleModsDefinition<infer TStyles>
     ? Partial<UnionToIntersection<TStyles>>
     : never;
@@ -21,14 +52,17 @@ type StyleModsComponent<
     TMods extends StyleModsDefinition
 > = hoistNonReactStatics.NonReactStatics<TComponent> &
     React.ForwardRefExoticComponent<InferModsProps<TMods> & React.ComponentProps<TComponent>> &
-    React.RefAttributes<React.ComponentProps<TComponent>>;
+    React.RefAttributes<React.ComponentProps<TComponent>> & { __mods__?: TMods };
 
-export type InferModsProps<TMods extends StyleModsDefinition> = {
-    [K in keyof TMods]+?: TMods[K] extends (propValue?: infer P) => any // factory with optional prop (default value)
-        ? boolean | P
-        : TMods[K] extends (propValue: infer P) => any // factory with required prop
-        ? P
-        : boolean; // static mod
+type WithStyleMods = {
+    <TMods extends StyleModsDefinition, TComponent extends React.ComponentType<any>>(
+        mods: TMods,
+        Component: TComponent
+    ): StyleModsComponent<TComponent, TMods>;
+
+    <TMods extends StyleModsDefinition>(mods: TMods): <TComponent extends React.ComponentType<any>>(
+        Component: TComponent
+    ) => StyleModsComponent<TComponent, TMods>;
 };
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -91,17 +125,6 @@ function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods ext
 export function defineStyleMods<T extends StyleModsDefinition>(mods: T) {
     return mods;
 }
-
-type WithStyleMods = {
-    <TMods extends StyleModsDefinition, TComponent extends React.ComponentType<any>>(
-        mods: TMods,
-        Component: TComponent
-    ): StyleModsComponent<TComponent, TMods>;
-
-    <TMods extends StyleModsDefinition>(mods: TMods): <TComponent extends React.ComponentType<any>>(
-        Component: TComponent
-    ) => StyleModsComponent<TComponent, TMods>;
-};
 
 export const withStyleMods: WithStyleMods = function withStyleMods(mods: StyleModsDefinition, Component?: React.ComponentType<any>) {
     if (Component === undefined) {

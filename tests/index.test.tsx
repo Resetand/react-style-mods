@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, test, expect } from "vitest";
-import { defineStyleMods, withStyleMods } from "../src/index";
+import { defineStyleMods, InferModsProps, withStyleMods } from "../src/index";
 
 describe("react-style-mods", () => {
     const mods = defineStyleMods({
