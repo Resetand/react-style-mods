@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import type hoistNonReactStatics from "hoist-non-react-statics";
+import hoistNonReactStatics from "hoist-non-react-statics";
 
 //----------------------------------------------------------------------------------------------------------------
 // Types
@@ -117,7 +117,7 @@ export const withStyleMods: WithStyleMods = function withStyleMods(mods: StyleMo
         return React.createElement(Component, { ref, ...restProps, ...(isEmpty(style) ? {} : { style }) });
     });
 
-    Object.assign(StyleModsWrapper, Component);
+    hoistNonReactStatics(StyleModsWrapper, Component);
 
     StyleModsWrapper.displayName = `withStyleMods(${Component.displayName || Component.name || "Component"})`;
 
