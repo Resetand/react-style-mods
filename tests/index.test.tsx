@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, test, expect } from "vitest";
-import { defineStyleMods, withStyleMods, createModsStylesFromProps } from "../src/index";
+import { defineStyleMods, withStyleMods } from "../src/index";
 
 describe("react-style-mods", () => {
     const mods = defineStyleMods({
@@ -42,26 +42,6 @@ describe("react-style-mods", () => {
         const Comp = withStyleMods(mods, MyComponent);
 
         expect(Comp.displayName).toBe("withStyleMods(MyComponent)");
-    });
-
-    test("should aggregate styles and rest props", () => {
-        const props = {
-            color: "red",
-            margin: true,
-            alignCenter: true,
-            myProp: true,
-            style: { display: "flex" },
-        };
-
-        const [style, restProps] = createModsStylesFromProps(props, mods);
-
-        expect(style).toEqual({
-            color: "red",
-            margin: 10,
-            textAlign: "center",
-        });
-
-        expect(restProps).toEqual({ myProp: true, style: { display: "flex" } });
     });
 
     test("should forward ref", () => {

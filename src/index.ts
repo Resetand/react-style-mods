@@ -45,40 +45,39 @@ function resolveProp(prop: any, mod: any) {
     return prop ? mod : {};
 }
 
-function isEmpty(obj) {
-    for (let prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            return false; // Object is not empty
+/**
+ * Aggregates styles from props based on the provided style mods.
+ * Note that the `style` prop is treated as a special case and will be merged with the aggregated styles.
+ */
+function aggregateStyleByProps<TProps extends Record<string, unknown>, TMods extends StyleModsDefinition>(props: TProps, mods: TMods) {
+    const style = {} as InferStyleModsStyleObject<TMods>;
+    const restProps = {} as Omit<TProps, keyof TMods>;
+    let isEmpty = true;
+
+    for (const prop of Object.keys(props)) {
+        if (Object.prototype.hasOwnProperty.call(props, prop)) {
+            const propValue = props[prop];
+
+            if (prop in mods) {
+                Object.assign(style, resolveProp(propValue, mods[prop]));
+                isEmpty = false;
+            } else {
+                restProps[prop] = propValue;
+            }
         }
     }
-    return true; // Object is empty
+
+    if (props.style && typeof props.style === "object") {
+        Object.assign(style, props.style);
+        isEmpty = false;
+    }
+
+    return [isEmpty ? undefined : style, restProps] as const;
 }
 
 // ----------------------------------------------------------------------------------------------------------------
 // Public API
 // ----------------------------------------------------------------------------------------------------------------
-
-/**
- * Allows to select styles based on props and mods.
- */
-export function createModsStylesFromProps<TProps extends Record<string, unknown>, TMods extends StyleModsDefinition>(
-    props: TProps,
-    mods: TMods
-) {
-    const style = {} as InferStyleModsStyleObject<TMods>;
-    const restProps = {} as Omit<TProps, keyof TMods>;
-
-    for (const prop of Object.keys(props)) {
-        if (Object.prototype.hasOwnProperty.call(props, prop)) {
-            if (prop in mods) {
-                Object.assign(style, resolveProp(props[prop], mods[prop]));
-            } else {
-                Object.assign(restProps, { [prop]: props[prop] });
-            }
-        }
-    }
-    return [style, restProps] as const;
-}
 
 /**
  * Type-safe way to define style mods for a component.
@@ -110,11 +109,8 @@ export const withStyleMods: WithStyleMods = function withStyleMods(mods: StyleMo
     }
 
     const StyleModsWrapper = forwardRef(function StyleModsWrapper(props: any, ref: React.Ref<any>) {
-        const [style, restProps] = createModsStylesFromProps(props, mods);
-        if (typeof props.style === "object" && props.style !== null) {
-            Object.assign(style, props.style);
-        }
-        return React.createElement(Component, { ref, ...restProps, ...(isEmpty(style) ? {} : { style }) });
+        const [style, restProps] = aggregateStyleByProps(props, mods);
+        return React.createElement(Component, { ref, style, ...restProps });
     });
 
     hoistNonReactStatics(StyleModsWrapper, Component);
